@@ -1,0 +1,55 @@
+package L7;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class ExampleCollectionIntegerTest {
+    ExampleCollection list = new ExampleCollection();
+
+    @Test
+    void addElemTest() {
+        list.add(2);
+        assertEquals(1, list.size());
+        assertEquals(2, list.getHead().getValue());
+        assertEquals(2, list.getTail().getValue());
+        list.add(4);
+        assertEquals(2, list.size());
+        assertEquals(2, list.getHead().getValue());
+        assertEquals(4, list.getTail().getValue());
+        list.add(3);
+        assertEquals(3, list.size());
+        assertEquals(2, list.getHead().getValue());
+        assertEquals(3, list.getTail().getValue());
+    }
+
+    @Test
+    void findByElemTest() {
+        list.add(2);
+        list.add(4);
+        list.add(3);
+        assertEquals(3, list.findByValue(3).getValue());
+        assertEquals(2, list.findByValue(2).getValue());
+        assertEquals(4, list.findByValue(4).getValue());
+    }
+
+    @Test
+    void deleteElemTest() {
+        list.add(2);
+        list.add(4);
+        list.add(3);
+        ExamplePartCollection deleted = list.delete(2);
+        assertEquals(2, list.size());
+        assertEquals(4, list.getHead().getValue());
+        ExamplePartCollection deletedHead = list.delete();
+        assertEquals(1, list.size());
+        assertEquals(3, list.getTail().getValue());
+    }
+
+    @Test
+    void ExceptionsTest() {
+        assertThrows(LinkedListException.class, () -> list.delete());
+        list.add(2);
+        assertThrows(LinkedListException.class, () -> list.findByValue(4));
+        assertThrows(LinkedListException.class, () -> list.delete(4));
+    }
+}

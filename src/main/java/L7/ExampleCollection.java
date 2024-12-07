@@ -2,54 +2,100 @@ package L7;
 
 import java.util.Iterator;
 
-public class ExampleCollection<T> implements Iterator<ExamplePartCollection<T>> {
-
-    private ExamplePartCollection<T> head;
-    private ExamplePartCollection<T> tail;
+public class ExampleCollection implements Iterable<ExamplePartCollection> {
+    private ExamplePartCollection head;
+    private ExamplePartCollection tail;
     private int size;
 
-    public void add(){
-        //добавить элемент
+    public void add(Object value) {
+        ExamplePartCollection newPart = new ExamplePartCollection(value);
+        if (tail == null) {
+            head = newPart;
+            tail = newPart;
+        } else {
+            tail.setNext(newPart);
+            newPart.setPrevious(tail);
+            tail = newPart;
+        }
+        size++;
     }
 
-    public ExamplePartCollection<T> delete(){
-        //удалить элемент
-        return null;
+    public ExamplePartCollection delete() {
+        if (head == null) {
+            throw new LinkedListException("Cannot delete from empty list");
+        }
+        ExamplePartCollection removed = head;
+        head = head.getNext();
+        if (head != null) {
+            head.setPrevious(null);
+        } else {
+            tail = null;
+        }
+        size--;
+        return removed;
     }
 
-    public ExamplePartCollection<T> delete(T value){
-        //удалить элемент по значению
-        // использовать equals()
-        return null;
+    public ExamplePartCollection delete(Object value) {
+        ExamplePartCollection current = head;
+        while (current != null) {
+            if (current.getValue().equals(value)) {
+                if (current.getPrevious() != null) {
+                    current.getPrevious().setNext(current.getNext());
+                } else {
+                    head = current.getNext();
+                }
+                if (current.getNext() != null) {
+                    current.getNext().setPrevious(current.getPrevious());
+                } else {
+                    tail = current.getPrevious();
+                }
+                size--;
+                return current;
+            }
+            current = current.getNext();
+        }
+        throw new LinkedListException("Cannot delete from empty list");
     }
 
-    public ExamplePartCollection<T> findByValue(T value){
-        //найти элемент по значению
-        //использовать next() и hasNext()
-        return null;
+    public ExamplePartCollection findByValue(Object value) {
+        ExamplePartCollection current = head;
+        while (current != null) {
+            if (current.getValue().equals(value)) {
+                return current;
+            }
+            current = current.getNext();
+        }
+        throw new LinkedListException("Cannot delete from empty list");
     }
 
-    public int size(){
+    public int size() {
         return size;
     }
 
-    public ExamplePartCollection<T> getHead() {
+    public ExamplePartCollection getHead() {
         return head;
     }
 
-    public ExamplePartCollection<T> getTail() {
+    public ExamplePartCollection getTail() {
         return tail;
     }
 
-
     @Override
-    public boolean hasNext() {
-        return false;
-    }
+    public Iterator<ExamplePartCollection> iterator() {
+        return new Iterator<ExamplePartCollection>() {
+            private ExamplePartCollection current = head;
 
-    @Override
-    public ExamplePartCollection<T> next() {
-        return null;
-    }
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
 
+            @Override
+            public ExamplePartCollection next() {
+                ExamplePartCollection temp = current;
+                current = current.getNext();
+                return temp;
+            }
+        };
+    }
 }
